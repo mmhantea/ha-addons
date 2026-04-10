@@ -18,12 +18,6 @@ bashio::log.info "Temperature range: ${TEMP_LOW}°C - ${TEMP_HIGH}°C"
 bashio::log.info "Button short press: ${BUTTON_SHORT}"
 bashio::log.info "Button long press: ${BUTTON_LONG}"
 
-# Check I2C device
-if ! i2cdetect -y 1 2>/dev/null | grep -q "1a"; then
-    bashio::log.warning "Argon Neo 5 not detected on I2C bus 1 (address 0x1a)"
-    bashio::log.warning "Make sure I2C is enabled and the case is properly connected"
-fi
-
 # Launch daemon
 exec python3 /argon_daemon.py \
     --fan-mode "${FAN_MODE}" \

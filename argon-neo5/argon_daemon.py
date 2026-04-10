@@ -1,20 +1,35 @@
 #!/usr/bin/env python3
-"""Argon Neo 5 fan control daemon for Home Assistant."""
+"""Argon Neo 5 fan control daemon for Home Assistant (RPi5 PWM fan)."""
 
 import argparse
 import logging
+import os
 import signal
 import subprocess
 import sys
 import time
 import threading
 
-I2C_BUS = 1
-I2C_ADDR = 0x1A
-FAN_REGISTER = 0x00
 GPIO_PIN = 4
+HWMON_BASE = "/sys/class/hwmon"
 
 logger = logging.getLogger("argon-neo5")
+
+
+def find_pwm_fan():
+    """Find the hwmon path for pwmfan dynamically."""
+    try:
+        for entry in os.listdir(HWMON_BASE):
+            name_path = os.path.join(HWMON_BASE, entry, "name")
+            try:
+                with open(name_path) as f:
+                    if f.read().strip() == "pwmfan":
+                        return os.path.join(HWMON_BASE, entry)
+            except IOError:
+                continue
+    except OSError:
+        pass
+    return None
 
 
 def get_cpu_temp():
@@ -27,14 +42,31 @@ def get_cpu_temp():
         return None
 
 
-def set_fan_speed(bus, speed):
-    """Set fan speed (0-100)."""
-    speed = max(0, min(100, int(speed)))
+def set_fan_speed(hwmon_path, speed_pct):
+    """Set fan speed as percentage (0-100) via PWM."""
+    speed_pct = max(0, min(100, int(speed_pct)))
+    pwm_value = int(speed_pct / 100 * 255)
+
     try:
-        bus.write_byte_data(I2C_ADDR, FAN_REGISTER, speed)
-        logger.debug("Fan speed set to %d%%", speed)
+        # Enable manual PWM control
+        with open(os.path.join(hwmon_path, "pwm1_enable"), "w") as f:
+            f.write("1")
+        # Set PWM value
+        with open(os.path.join(hwmon_path, "pwm1"), "w") as f:
+            f.write(str(pwm_value))
+        logger.debug("Fan speed set to %d%% (PWM=%d)", speed_pct, pwm_value)
+    except IOError as e:
+        logger.error("Failed to set fan speed: %s", e)
+
+
+def set_fan_auto(hwmon_path):
+    """Return fan to automatic kernel control."""
+    try:
+        with open(os.path.join(hwmon_path, "pwm1_enable"), "w") as f:
+            f.write("2")
+        logger.info("Fan returned to automatic control")
     except IOError:
-        logger.error("Failed to set fan speed via I2C")
+        pass
 
 
 def calculate_auto_speed(temp, temp_low, temp_high):
@@ -47,53 +79,55 @@ def calculate_auto_speed(temp, temp_low, temp_high):
 
 
 def execute_action(action):
-    """Execute button action using subprocess with fixed commands."""
+    """Execute button action."""
     if action == "reboot":
         logger.info("Executing reboot...")
         subprocess.run(["/sbin/reboot"], check=False)
     elif action == "shutdown":
         logger.info("Executing shutdown...")
         subprocess.run(["/sbin/poweroff"], check=False)
-    else:
-        logger.debug("Button action: none")
 
 
 def monitor_button(button_short, button_long, stop_event):
     """Monitor GPIO button presses in a background thread."""
     try:
-        import RPi.GPIO as GPIO
+        import lgpio
     except ImportError:
-        logger.warning("RPi.GPIO not available - button monitoring disabled")
+        logger.warning("lgpio not available - button monitoring disabled")
         return
 
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(GPIO_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-    logger.info("Button monitoring started on GPIO %d", GPIO_PIN)
+    try:
+        h = lgpio.gpiochip_open(4)  # gpiochip4 on RPi5
+        lgpio.gpio_claim_input(h, GPIO_PIN)
+        logger.info("Button monitoring started on GPIO %d", GPIO_PIN)
+    except Exception as e:
+        logger.warning("Could not open GPIO: %s - button monitoring disabled", e)
+        return
 
     while not stop_event.is_set():
-        if GPIO.input(GPIO_PIN) == 0:
-            press_start = time.time()
-            while GPIO.input(GPIO_PIN) == 0 and not stop_event.is_set():
-                time.sleep(0.001)
-            duration = time.time() - press_start
+        try:
+            if lgpio.gpio_read(h, GPIO_PIN) == 0:
+                press_start = time.time()
+                while lgpio.gpio_read(h, GPIO_PIN) == 0 and not stop_event.is_set():
+                    time.sleep(0.001)
+                duration = time.time() - press_start
 
-            if duration < 0.03:
-                logger.info("Short press detected (%.0fms)", duration * 1000)
-                execute_action(button_short)
-            elif duration < 0.05:
-                logger.info("Long press detected (%.0fms)", duration * 1000)
-                execute_action(button_long)
-            else:
-                logger.debug("Ignored press (%.0fms)", duration * 1000)
+                if duration < 0.03:
+                    logger.info("Short press detected (%.0fms)", duration * 1000)
+                    execute_action(button_short)
+                elif duration < 0.05:
+                    logger.info("Long press detected (%.0fms)", duration * 1000)
+                    execute_action(button_long)
+        except Exception as e:
+            logger.debug("GPIO read error: %s", e)
 
         stop_event.wait(0.01)
 
-    GPIO.cleanup(GPIO_PIN)
+    lgpio.gpiochip_close(h)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Argon Neo 5 Fan Control")
+    parser = argparse.ArgumentParser(description="Argon Neo 5 Fan Control (RPi5)")
     parser.add_argument("--fan-mode", default="auto", choices=["auto", "manual", "off"])
     parser.add_argument("--temp-low", type=int, default=45)
     parser.add_argument("--temp-high", type=int, default=65)
@@ -110,27 +144,23 @@ def main():
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    logger.info("Argon Neo 5 daemon starting")
+    logger.info("Argon Neo 5 daemon starting (RPi5 PWM mode)")
     logger.info("Mode: %s | Temp range: %d-%d°C | Interval: %ds",
                 args.fan_mode, args.temp_low, args.temp_high, args.update_interval)
 
-    try:
-        from smbus2 import SMBus
-        bus = SMBus(I2C_BUS)
-    except Exception as e:
-        logger.error("Failed to open I2C bus %d: %s", I2C_BUS, e)
-        logger.error("Make sure I2C is enabled and /dev/i2c-1 is accessible")
+    hwmon_path = find_pwm_fan()
+    if not hwmon_path:
+        logger.error("PWM fan controller not found in /sys/class/hwmon/")
+        logger.error("Make sure the fan is connected to the RPi5 fan header")
         sys.exit(1)
+
+    logger.info("PWM fan found at: %s", hwmon_path)
 
     stop_event = threading.Event()
 
-    # Graceful shutdown: turn off fan
     def shutdown_handler(signum, frame):
-        logger.info("Shutting down - setting fan to 0%%")
-        try:
-            set_fan_speed(bus, 0)
-        except Exception:
-            pass
+        logger.info("Shutting down - returning fan to auto control")
+        set_fan_auto(hwmon_path)
         stop_event.set()
 
     signal.signal(signal.SIGTERM, shutdown_handler)
@@ -162,14 +192,13 @@ def main():
 
         if speed != last_speed:
             logger.info("CPU: %.1f°C → Fan: %d%%", temp, speed)
-            set_fan_speed(bus, speed)
+            set_fan_speed(hwmon_path, speed)
             last_speed = speed
         else:
             logger.debug("CPU: %.1f°C → Fan: %d%% (unchanged)", temp, speed)
 
         stop_event.wait(args.update_interval)
 
-    bus.close()
     logger.info("Daemon stopped")
 
 

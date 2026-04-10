@@ -3,10 +3,9 @@ FROM ${BUILD_FROM}
 
 RUN apk add --no-cache \
     python3 \
-    py3-pip \
-    i2c-tools
+    py3-pip
 
-RUN pip3 install --no-cache-dir --break-system-packages smbus2
+RUN pip3 install --no-cache-dir --break-system-packages lgpio
 
 COPY run.sh /
 COPY argon_daemon.py /
