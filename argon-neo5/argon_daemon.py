@@ -38,6 +38,21 @@ def execute_action(action):
         subprocess.run(["/sbin/poweroff"], check=False)
 
 
+def find_gpio_line(gpiod, pin):
+    """Find the gpiochip and line for a given BCM pin number."""
+    for chip_path in ["/dev/gpiochip0", "/dev/gpiochip10", "/dev/gpiochip11",
+                      "/dev/gpiochip12", "/dev/gpiochip13"]:
+        try:
+            chip = gpiod.Chip(chip_path)
+            line = chip.get_line(pin)
+            line.request(consumer="argon-neo5", type=gpiod.LINE_REQ_DIR_IN)
+            logger.info("Button found on %s GPIO %d", chip_path, pin)
+            return chip, line
+        except Exception:
+            continue
+    return None, None
+
+
 def monitor_button(button_short, button_long, stop_event):
     """Monitor GPIO button presses in a background thread."""
     try:
@@ -46,13 +61,9 @@ def monitor_button(button_short, button_long, stop_event):
         logger.warning("gpiod not available - button monitoring disabled")
         return
 
-    try:
-        chip = gpiod.Chip("/dev/gpiochip4")
-        line = chip.get_line(GPIO_PIN)
-        line.request(consumer="argon-neo5", type=gpiod.LINE_REQ_DIR_IN)
-        logger.info("Button monitoring started on GPIO %d", GPIO_PIN)
-    except Exception as e:
-        logger.warning("Could not open GPIO: %s - button monitoring disabled", e)
+    chip, line = find_gpio_line(gpiod, GPIO_PIN)
+    if line is None:
+        logger.warning("GPIO %d not found on any gpiochip - button monitoring disabled", GPIO_PIN)
         return
 
     while not stop_event.is_set():

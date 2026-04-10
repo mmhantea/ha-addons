@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1
+
+- Fixed GPIO chip path: RPi5 on HAOS uses gpiochip0, not gpiochip4
+- Daemon now searches all available gpiochips for the button pin
+
 ## 2.0.0
 
 - Simplified addon to CPU temperature monitoring + power button only
