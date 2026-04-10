@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.6
+
+- Access host sysfs via /proc/1/root/sys to bypass container read-only restriction
+- Added /dev/gpiochip4 device mapping for button GPIO on RPi5
+- Added SYS_ADMIN privilege for host namespace access
+
 ## 1.0.5
 
 - Added full_access to allow writing to /sys for PWM fan control

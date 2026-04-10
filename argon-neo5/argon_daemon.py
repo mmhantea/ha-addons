@@ -11,7 +11,8 @@ import time
 import threading
 
 GPIO_PIN = 4
-HWMON_BASE = "/sys/class/hwmon"
+# Access host sysfs through init process namespace (container workaround)
+HWMON_BASE = "/proc/1/root/sys/class/hwmon"
 
 logger = logging.getLogger("argon-neo5")
 
