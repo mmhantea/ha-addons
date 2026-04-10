@@ -2,12 +2,6 @@ configuration:
   update_interval:
     name: Update Interval (seconds)
     description: How often to log the CPU temperature
-  button_short_press:
-    name: Short Press Action
-    description: Action when the power button is briefly pressed (< 30ms)
-  button_long_press:
-    name: Long Press Action
-    description: Action when the power button is held down (30-50ms)
   log_level:
     name: Log Level
     description: Logging verbosity

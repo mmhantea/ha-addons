@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.0
+
+- Removed button monitoring: RPi5 hardware handles the button directly
+- Removed GPIO, gpiod, and all related dependencies
+- Removed privileged/full_access: no special permissions needed
+- Minimal addon: only CPU temperature monitoring
+
 ## 2.0.1
 
 - Fixed GPIO chip path: RPi5 on HAOS uses gpiochip0, not gpiochip4

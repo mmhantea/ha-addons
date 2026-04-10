@@ -1,7 +1,7 @@
 name: Argon Neo 5 Monitor
-version: "2.0.1"
+version: "2.1.0"
 slug: argon-neo5
-description: CPU temperature monitor and power button handler for Argon Neo 5 on Raspberry Pi 5
+description: CPU temperature monitor for Argon Neo 5 on Raspberry Pi 5
 url: https://github.com/mmhantea/ha-addons/tree/main/argon-neo5
 arch:
   - aarch64
@@ -10,28 +10,13 @@ boot: auto
 init: false
 timeout: 30
 
-# Hardware access
-devices:
-  - /dev/gpiochip0
-  - /dev/gpiochip10
-  - /dev/gpiochip11
-  - /dev/gpiochip12
-  - /dev/gpiochip13
-privileged:
-  - SYS_RAWIO
-full_access: true
-
 map:
   - config:rw
 
 options:
   update_interval: 30
-  button_short_press: "reboot"
-  button_long_press: "shutdown"
   log_level: "info"
 
 schema:
   update_interval: int(10,300)
-  button_short_press: list(none|reboot|shutdown)
-  button_long_press: list(none|reboot|shutdown)
   log_level: list(debug|info|warning|error)

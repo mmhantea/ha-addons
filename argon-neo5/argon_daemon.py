@@ -1,19 +1,15 @@
 #!/usr/bin/env python3
 """Argon Neo 5 monitor daemon for Home Assistant (RPi5).
 
-Monitors CPU temperature and handles power button actions.
-Fan control is handled automatically by the HAOS kernel thermal daemon.
+Monitors CPU temperature.
+Fan is controlled automatically by HAOS kernel thermal daemon.
+Power button is handled directly by RPi5 hardware.
 """
 
 import argparse
 import logging
 import signal
-import subprocess
-import sys
 import time
-import threading
-
-GPIO_PIN = 4
 
 logger = logging.getLogger("argon-neo5")
 
@@ -28,72 +24,9 @@ def get_cpu_temp():
         return None
 
 
-def execute_action(action):
-    """Execute button action."""
-    if action == "reboot":
-        logger.info("Executing reboot...")
-        subprocess.run(["/sbin/reboot"], check=False)
-    elif action == "shutdown":
-        logger.info("Executing shutdown...")
-        subprocess.run(["/sbin/poweroff"], check=False)
-
-
-def find_gpio_line(gpiod, pin):
-    """Find the gpiochip and line for a given BCM pin number."""
-    for chip_path in ["/dev/gpiochip0", "/dev/gpiochip10", "/dev/gpiochip11",
-                      "/dev/gpiochip12", "/dev/gpiochip13"]:
-        try:
-            chip = gpiod.Chip(chip_path)
-            line = chip.get_line(pin)
-            line.request(consumer="argon-neo5", type=gpiod.LINE_REQ_DIR_IN)
-            logger.info("Button found on %s GPIO %d", chip_path, pin)
-            return chip, line
-        except Exception:
-            continue
-    return None, None
-
-
-def monitor_button(button_short, button_long, stop_event):
-    """Monitor GPIO button presses in a background thread."""
-    try:
-        import gpiod
-    except ImportError:
-        logger.warning("gpiod not available - button monitoring disabled")
-        return
-
-    chip, line = find_gpio_line(gpiod, GPIO_PIN)
-    if line is None:
-        logger.warning("GPIO %d not found on any gpiochip - button monitoring disabled", GPIO_PIN)
-        return
-
-    while not stop_event.is_set():
-        try:
-            if line.get_value() == 0:
-                press_start = time.time()
-                while line.get_value() == 0 and not stop_event.is_set():
-                    time.sleep(0.001)
-                duration = time.time() - press_start
-
-                if duration < 0.03:
-                    logger.info("Short press detected (%.0fms)", duration * 1000)
-                    execute_action(button_short)
-                elif duration < 0.05:
-                    logger.info("Long press detected (%.0fms)", duration * 1000)
-                    execute_action(button_long)
-        except Exception as e:
-            logger.debug("GPIO read error: %s", e)
-
-        stop_event.wait(0.01)
-
-    line.release()
-    chip.close()
-
-
 def main():
     parser = argparse.ArgumentParser(description="Argon Neo 5 Monitor (RPi5)")
     parser.add_argument("--update-interval", type=int, default=30)
-    parser.add_argument("--button-short", default="reboot", choices=["none", "reboot", "shutdown"])
-    parser.add_argument("--button-long", default="shutdown", choices=["none", "reboot", "shutdown"])
     parser.add_argument("--log-level", default="info", choices=["debug", "info", "warning", "error"])
     args = parser.parse_args()
 
@@ -103,27 +36,18 @@ def main():
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    logger.info("Argon Neo 5 daemon starting")
-    logger.info("Note: Fan is controlled automatically by HAOS kernel thermal daemon")
-    logger.info("Button short press: %s | Long press: %s", args.button_short, args.button_long)
+    logger.info("Argon Neo 5 monitor starting")
+    logger.info("Fan: auto (HAOS kernel) | Button: hardware (RPi5)")
 
-    stop_event = threading.Event()
+    stop = [False]
+    signal.signal(signal.SIGTERM, lambda s, f: stop.__setitem__(0, True))
+    signal.signal(signal.SIGINT, lambda s, f: stop.__setitem__(0, True))
 
-    signal.signal(signal.SIGTERM, lambda s, f: stop_event.set())
-    signal.signal(signal.SIGINT, lambda s, f: stop_event.set())
-
-    if args.button_short != "none" or args.button_long != "none":
-        threading.Thread(
-            target=monitor_button,
-            args=(args.button_short, args.button_long, stop_event),
-            daemon=True,
-        ).start()
-
-    while not stop_event.is_set():
+    while not stop[0]:
         temp = get_cpu_temp()
         if temp is not None:
             logger.info("CPU temperature: %.1f°C", temp)
-        stop_event.wait(args.update_interval)
+        time.sleep(args.update_interval)
 
     logger.info("Daemon stopped")
 
