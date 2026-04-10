@@ -1,5 +1,5 @@
 name: Argon Neo 5 Fan Control
-version: "1.0.1"
+version: "1.0.2"
 slug: argon-neo5
 description: Fan speed control and power button management for Argon Neo 5 case on Raspberry Pi 5
 url: https://github.com/mmhantea/ha-addons/tree/main/argon-neo5
@@ -15,6 +15,8 @@ devices:
   - /dev/i2c-1
 privileged:
   - SYS_RAWIO
+  - SYS_ADMIN
+full_access: true
 
 map:
   - config:rw
