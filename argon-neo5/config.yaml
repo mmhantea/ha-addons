@@ -40,6 +40,3 @@ schema:
   button_short_press: list(none|reboot|shutdown)
   button_long_press: list(none|reboot|shutdown)
   log_level: list(debug|info|warning|error)
-
-# Docker image
-image: ghcr.io/mmhantea/ha-addons/argon-neo5-{arch}
