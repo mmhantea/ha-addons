@@ -91,14 +91,16 @@ def execute_action(action):
 def monitor_button(button_short, button_long, stop_event):
     """Monitor GPIO button presses in a background thread."""
     try:
-        import lgpio
+        import gpiod
     except ImportError:
-        logger.warning("lgpio not available - button monitoring disabled")
+        logger.warning("gpiod not available - button monitoring disabled")
         return
 
     try:
-        h = lgpio.gpiochip_open(4)  # gpiochip4 on RPi5
-        lgpio.gpio_claim_input(h, GPIO_PIN)
+        # RPi5 uses gpiochip4 for GPIO header pins
+        chip = gpiod.Chip("/dev/gpiochip4")
+        line = chip.get_line(GPIO_PIN)
+        line.request(consumer="argon-neo5", type=gpiod.LINE_REQ_DIR_IN)
         logger.info("Button monitoring started on GPIO %d", GPIO_PIN)
     except Exception as e:
         logger.warning("Could not open GPIO: %s - button monitoring disabled", e)
@@ -106,9 +108,9 @@ def monitor_button(button_short, button_long, stop_event):
 
     while not stop_event.is_set():
         try:
-            if lgpio.gpio_read(h, GPIO_PIN) == 0:
+            if line.get_value() == 0:
                 press_start = time.time()
-                while lgpio.gpio_read(h, GPIO_PIN) == 0 and not stop_event.is_set():
+                while line.get_value() == 0 and not stop_event.is_set():
                     time.sleep(0.001)
                 duration = time.time() - press_start
 
@@ -123,7 +125,8 @@ def monitor_button(button_short, button_long, stop_event):
 
         stop_event.wait(0.01)
 
-    lgpio.gpiochip_close(h)
+    line.release()
+    chip.close()
 
 
 def main():

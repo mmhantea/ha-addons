@@ -5,7 +5,7 @@ RUN apk add --no-cache \
     python3 \
     py3-pip
 
-RUN pip3 install --no-cache-dir --break-system-packages lgpio
+RUN pip3 install --no-cache-dir --break-system-packages gpiod
 
 COPY run.sh /
 COPY argon_daemon.py /

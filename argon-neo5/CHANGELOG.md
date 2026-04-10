@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.5
+
+- Added full_access to allow writing to /sys for PWM fan control
+- Replaced lgpio with gpiod for button monitoring (RPi5 compatible)
+
 ## 1.0.4
 
 - Rewritten fan control to use RPi5 native PWM fan header (no I2C required)
