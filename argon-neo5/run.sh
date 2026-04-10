@@ -3,6 +3,24 @@
 
 bashio::log.info "Starting Argon Neo 5 Fan Control..."
 
+# Enable I2C if not already enabled (one-time configuration)
+bashio::log.info "Checking I2C configuration..."
+if ! grep -q "dtparam=i2c_arm=on" /mnt/boot/firmware/config.txt 2>/dev/null; then
+    bashio::log.info "Enabling I2C in boot configuration..."
+    if mount /dev/nvme0n1p1 /mnt 2>/dev/null; then
+        echo "dtparam=i2c_arm=on" >> /mnt/config.txt
+        umount /mnt
+        bashio::log.info "I2C enabled. Rebooting system..."
+        sleep 2
+        /sbin/reboot
+        exit 0
+    else
+        bashio::log.warning "Could not mount boot partition. I2C may need manual configuration."
+    fi
+else
+    bashio::log.info "I2C is already configured."
+fi
+
 # Read configuration from HA
 FAN_MODE=$(bashio::config 'fan_mode')
 TEMP_LOW=$(bashio::config 'temp_low')
