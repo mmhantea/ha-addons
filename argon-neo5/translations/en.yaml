@@ -1,28 +1,13 @@
 configuration:
-  fan_mode:
-    name: Fan Mode
-    description: >-
-      Auto: adjusts speed based on CPU temperature.
-      Manual: runs at a fixed speed.
-      Off: fan stays off.
-  temp_low:
-    name: Temperature Low (°C)
-    description: Temperature below which the fan is off (auto mode only)
-  temp_high:
-    name: Temperature High (°C)
-    description: Temperature at which the fan runs at 100% (auto mode only)
-  manual_speed:
-    name: Manual Fan Speed (%)
-    description: Fixed fan speed when in manual mode (0-100)
   update_interval:
     name: Update Interval (seconds)
-    description: How often to check the CPU temperature and adjust fan speed
+    description: How often to log the CPU temperature
   button_short_press:
     name: Short Press Action
-    description: Action when the power button is briefly pressed
+    description: Action when the power button is briefly pressed (< 30ms)
   button_long_press:
     name: Long Press Action
-    description: Action when the power button is held down
+    description: Action when the power button is held down (30-50ms)
   log_level:
     name: Log Level
-    description: Logging verbosity (debug shows all temperature readings)
+    description: Logging verbosity

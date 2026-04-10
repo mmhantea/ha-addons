@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.0
+
+- Simplified addon to CPU temperature monitoring + power button only
+- Removed fan control (HAOS kernel thermal daemon handles fan automatically)
+- Removed all I2C, PWM, smbus2, i2c-tools dependencies
+- Cleaner configuration: removed fan-specific options
+- Updated README to reflect actual functionality
+
 ## 1.0.7
 
 - Use nsenter to write PWM values to host sysfs (bypasses container read-only /sys)

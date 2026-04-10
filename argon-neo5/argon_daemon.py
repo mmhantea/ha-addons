@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Argon Neo 5 fan control daemon for Home Assistant (RPi5 PWM fan)."""
+"""Argon Neo 5 monitor daemon for Home Assistant (RPi5).
+
+Monitors CPU temperature and handles power button actions.
+Fan control is handled automatically by the HAOS kernel thermal daemon.
+"""
 
 import argparse
 import logging
-import os
 import signal
 import subprocess
 import sys
@@ -11,26 +14,8 @@ import time
 import threading
 
 GPIO_PIN = 4
-# Access host sysfs through init process namespace (container workaround)
-HWMON_BASE = "/proc/1/root/sys/class/hwmon"
 
 logger = logging.getLogger("argon-neo5")
-
-
-def find_pwm_fan():
-    """Find the hwmon path for pwmfan dynamically."""
-    try:
-        for entry in os.listdir(HWMON_BASE):
-            name_path = os.path.join(HWMON_BASE, entry, "name")
-            try:
-                with open(name_path) as f:
-                    if f.read().strip() == "pwmfan":
-                        return os.path.join(HWMON_BASE, entry)
-            except IOError:
-                continue
-    except OSError:
-        pass
-    return None
 
 
 def get_cpu_temp():
@@ -41,55 +26,6 @@ def get_cpu_temp():
     except (IOError, ValueError):
         logger.error("Failed to read CPU temperature")
         return None
-
-
-def _nsenter_write(host_path, value):
-    """Write a value to a host sysfs path via nsenter."""
-    subprocess.run(
-        ["nsenter", "--target", "1", "--mount", "--", "tee", host_path],
-        input=str(value).encode(),
-        capture_output=True,
-        check=True,
-    )
-
-
-def _host_path(hwmon_path):
-    """Convert container hwmon path to host sysfs path."""
-    return hwmon_path.replace("/proc/1/root", "")
-
-
-def set_fan_speed(hwmon_path, speed_pct):
-    """Set fan speed as percentage (0-100) via PWM using nsenter."""
-    speed_pct = max(0, min(100, int(speed_pct)))
-    pwm_value = int(speed_pct / 100 * 255)
-    host = _host_path(hwmon_path)
-
-    try:
-        _nsenter_write(os.path.join(host, "pwm1_enable"), 1)
-        _nsenter_write(os.path.join(host, "pwm1"), pwm_value)
-        logger.debug("Fan speed set to %d%% (PWM=%d)", speed_pct, pwm_value)
-    except subprocess.CalledProcessError as e:
-        logger.error("Failed to set fan speed: %s", e.stderr.decode().strip() if e.stderr else str(e))
-    except Exception as e:
-        logger.error("Failed to set fan speed: %s", e)
-
-
-def set_fan_auto(hwmon_path):
-    """Return fan to automatic kernel control."""
-    try:
-        _nsenter_write(os.path.join(_host_path(hwmon_path), "pwm1_enable"), 2)
-        logger.info("Fan returned to automatic control")
-    except Exception:
-        pass
-
-
-def calculate_auto_speed(temp, temp_low, temp_high):
-    """Linear interpolation between temp_low (0%) and temp_high (100%)."""
-    if temp <= temp_low:
-        return 0
-    if temp >= temp_high:
-        return 100
-    return int((temp - temp_low) / (temp_high - temp_low) * 100)
 
 
 def execute_action(action):
@@ -111,7 +47,6 @@ def monitor_button(button_short, button_long, stop_event):
         return
 
     try:
-        # RPi5 uses gpiochip4 for GPIO header pins
         chip = gpiod.Chip("/dev/gpiochip4")
         line = chip.get_line(GPIO_PIN)
         line.request(consumer="argon-neo5", type=gpiod.LINE_REQ_DIR_IN)
@@ -144,12 +79,8 @@ def monitor_button(button_short, button_long, stop_event):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Argon Neo 5 Fan Control (RPi5)")
-    parser.add_argument("--fan-mode", default="auto", choices=["auto", "manual", "off"])
-    parser.add_argument("--temp-low", type=int, default=45)
-    parser.add_argument("--temp-high", type=int, default=65)
-    parser.add_argument("--manual-speed", type=int, default=50)
-    parser.add_argument("--update-interval", type=int, default=10)
+    parser = argparse.ArgumentParser(description="Argon Neo 5 Monitor (RPi5)")
+    parser.add_argument("--update-interval", type=int, default=30)
     parser.add_argument("--button-short", default="reboot", choices=["none", "reboot", "shutdown"])
     parser.add_argument("--button-long", default="shutdown", choices=["none", "reboot", "shutdown"])
     parser.add_argument("--log-level", default="info", choices=["debug", "info", "warning", "error"])
@@ -161,59 +92,26 @@ def main():
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    logger.info("Argon Neo 5 daemon starting (RPi5 PWM mode)")
-    logger.info("Mode: %s | Temp range: %d-%d°C | Interval: %ds",
-                args.fan_mode, args.temp_low, args.temp_high, args.update_interval)
-
-    hwmon_path = find_pwm_fan()
-    if not hwmon_path:
-        logger.error("PWM fan controller not found in /sys/class/hwmon/")
-        logger.error("Make sure the fan is connected to the RPi5 fan header")
-        sys.exit(1)
-
-    logger.info("PWM fan found at: %s", hwmon_path)
+    logger.info("Argon Neo 5 daemon starting")
+    logger.info("Note: Fan is controlled automatically by HAOS kernel thermal daemon")
+    logger.info("Button short press: %s | Long press: %s", args.button_short, args.button_long)
 
     stop_event = threading.Event()
 
-    def shutdown_handler(signum, frame):
-        logger.info("Shutting down - returning fan to auto control")
-        set_fan_auto(hwmon_path)
-        stop_event.set()
+    signal.signal(signal.SIGTERM, lambda s, f: stop_event.set())
+    signal.signal(signal.SIGINT, lambda s, f: stop_event.set())
 
-    signal.signal(signal.SIGTERM, shutdown_handler)
-    signal.signal(signal.SIGINT, shutdown_handler)
-
-    # Start button monitoring thread
     if args.button_short != "none" or args.button_long != "none":
-        button_thread = threading.Thread(
+        threading.Thread(
             target=monitor_button,
             args=(args.button_short, args.button_long, stop_event),
             daemon=True,
-        )
-        button_thread.start()
+        ).start()
 
-    # Main fan control loop
-    last_speed = -1
     while not stop_event.is_set():
         temp = get_cpu_temp()
-        if temp is None:
-            stop_event.wait(args.update_interval)
-            continue
-
-        if args.fan_mode == "auto":
-            speed = calculate_auto_speed(temp, args.temp_low, args.temp_high)
-        elif args.fan_mode == "manual":
-            speed = args.manual_speed
-        else:
-            speed = 0
-
-        if speed != last_speed:
-            logger.info("CPU: %.1f°C → Fan: %d%%", temp, speed)
-            set_fan_speed(hwmon_path, speed)
-            last_speed = speed
-        else:
-            logger.debug("CPU: %.1f°C → Fan: %d%% (unchanged)", temp, speed)
-
+        if temp is not None:
+            logger.info("CPU temperature: %.1f°C", temp)
         stop_event.wait(args.update_interval)
 
     logger.info("Daemon stopped")

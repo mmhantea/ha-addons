@@ -1,78 +1,54 @@
-# Argon Neo 5 Fan Control
+# Argon Neo 5 Monitor
 
-Home Assistant add-on for controlling the fan and power button on the Argon Neo 5 case for Raspberry Pi 5.
+Home Assistant add-on for monitoring CPU temperature and handling the power button on the Argon Neo 5 case for Raspberry Pi 5.
 
-## Features
+## What this add-on does
 
-- **Automatic fan control** — adjusts speed based on CPU temperature with configurable thresholds
-- **Manual mode** — set a fixed fan speed
+- **CPU temperature monitoring** — logs temperature at a configurable interval
 - **Power button** — configurable actions for short and long press (reboot, shutdown, or none)
-- **Graceful shutdown** — fan turns off when the add-on stops
+
+## Fan control
+
+The fan on the Argon Neo 5 connects directly to the RPi5 PWM fan header and is controlled **automatically by the HAOS kernel thermal daemon** — no configuration needed. The fan will spin up as CPU temperature rises and slow down when it cools.
 
 ## Prerequisites
 
-I2C must be enabled on your Raspberry Pi 5. Add to `/boot/config.txt`:
+No special configuration required. The add-on works out of the box on HAOS with Raspberry Pi 5.
 
-```
-dtparam=i2c_arm=on
-```
+## Installation
 
-Reboot after making this change.
+1. In Home Assistant go to **Settings** → **Add-ons** → **Add-on Store**
+2. Click the **three dots** (top right) → **Repositories**
+3. Add:
+   ```
+   https://github.com/mmhantea/ha-addons
+   ```
+4. Find **Argon Neo 5 Monitor** → **Install**
+5. Configure and **Start**
 
 ## Configuration
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| Fan Mode | `auto` | `auto`, `manual`, or `off` |
-| Temperature Low | `45°C` | Fan off below this temp (auto mode) |
-| Temperature High | `65°C` | Fan at 100% above this temp (auto mode) |
-| Manual Speed | `50%` | Fixed speed in manual mode |
-| Update Interval | `10s` | Temperature check frequency |
+| Update Interval | `30s` | How often to log CPU temperature |
 | Short Press | `reboot` | Power button short press action |
 | Long Press | `shutdown` | Power button long press action |
 | Log Level | `info` | `debug`, `info`, `warning`, `error` |
 
-### Auto mode behavior
+### Button actions
 
-The fan speed is linearly interpolated between the low and high temperature thresholds:
-
-- Below **temp_low** → fan off (0%)
-- At **temp_high** → fan at 100%
-- Between → proportional speed
-
-Example with defaults (45-65°C): at 55°C the fan runs at 50%.
+| Action | Description |
+|--------|-------------|
+| `reboot` | Restarts the Raspberry Pi |
+| `shutdown` | Powers off the Raspberry Pi |
+| `none` | Ignores the button press |
 
 ## Troubleshooting
 
-### Verify hardware detection
+**Button not working:**
+- Check add-on logs for `Button monitoring started on GPIO 4`
+- If you see `button monitoring disabled`, GPIO access may not be available
 
-```bash
-i2cdetect -y 1
-```
-
-You should see `1a` in the output grid. If not:
-- Check that I2C is enabled in `/boot/config.txt`
-- Verify the case is properly connected
-
-### Check add-on logs
-
-Go to **Settings** → **Add-ons** → **Argon Neo 5 Fan Control** → **Log** tab.
-
-Set log level to `debug` for detailed temperature and fan speed readings.
-
-### Manual fan test
-
-```bash
-# Set fan to 75%
-i2cset -y 1 0x1a 0x00 75
-
-# Turn off
-i2cset -y 1 0x1a 0x00 0
-```
-
-## Technical Details
-
-- I2C address: `0x1a` on bus 1
-- Fan speed range: 0-100 (percentage)
-- Button GPIO: pin 4 (BCM)
-- Temperature source: `/sys/class/thermal/thermal_zone0/temp`
+**Temperature not logging:**
+- Set log level to `debug` to see every reading
+- Default `info` level logs every `update_interval` seconds
