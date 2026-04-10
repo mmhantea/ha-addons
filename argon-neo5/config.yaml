@@ -1,0 +1,45 @@
+name: Argon Neo 5 Fan Control
+version: "1.0.0"
+slug: argon-neo5
+description: Fan speed control and power button management for Argon Neo 5 case on Raspberry Pi 5
+url: https://github.com/mmhantea/ha-addons/tree/main/argon-neo5
+arch:
+  - aarch64
+startup: system
+boot: auto
+init: false
+timeout: 30
+
+# Hardware access
+devices:
+  - /dev/i2c-1
+privileged:
+  - SYS_RAWIO
+
+map:
+  - config:rw
+
+# User-configurable options (defaults)
+options:
+  fan_mode: "auto"
+  temp_low: 45
+  temp_high: 65
+  manual_speed: 50
+  update_interval: 10
+  button_short_press: "reboot"
+  button_long_press: "shutdown"
+  log_level: "info"
+
+# UI schema
+schema:
+  fan_mode: list(auto|manual|off)
+  temp_low: int(20,80)
+  temp_high: int(30,90)
+  manual_speed: int(0,100)
+  update_interval: int(5,300)
+  button_short_press: list(none|reboot|shutdown)
+  button_long_press: list(none|reboot|shutdown)
+  log_level: list(debug|info|warning|error)
+
+# Docker image
+image: ghcr.io/mmhantea/ha-addons/argon-neo5-{arch}
