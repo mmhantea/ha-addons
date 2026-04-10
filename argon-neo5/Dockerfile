@@ -3,7 +3,8 @@ FROM ${BUILD_FROM}
 
 RUN apk add --no-cache \
     python3 \
-    py3-pip
+    py3-pip \
+    util-linux
 
 RUN pip3 install --no-cache-dir --break-system-packages gpiod
 

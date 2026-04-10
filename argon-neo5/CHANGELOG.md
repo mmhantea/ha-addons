@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.7
+
+- Use nsenter to write PWM values to host sysfs (bypasses container read-only /sys)
+- Added SYS_PTRACE privilege and util-linux for nsenter support
+
 ## 1.0.6
 
 - Access host sysfs via /proc/1/root/sys to bypass container read-only restriction

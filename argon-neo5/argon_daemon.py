@@ -43,30 +43,43 @@ def get_cpu_temp():
         return None
 
 
+def _nsenter_write(host_path, value):
+    """Write a value to a host sysfs path via nsenter."""
+    subprocess.run(
+        ["nsenter", "--target", "1", "--mount", "--", "tee", host_path],
+        input=str(value).encode(),
+        capture_output=True,
+        check=True,
+    )
+
+
+def _host_path(hwmon_path):
+    """Convert container hwmon path to host sysfs path."""
+    return hwmon_path.replace("/proc/1/root", "")
+
+
 def set_fan_speed(hwmon_path, speed_pct):
-    """Set fan speed as percentage (0-100) via PWM."""
+    """Set fan speed as percentage (0-100) via PWM using nsenter."""
     speed_pct = max(0, min(100, int(speed_pct)))
     pwm_value = int(speed_pct / 100 * 255)
+    host = _host_path(hwmon_path)
 
     try:
-        # Enable manual PWM control
-        with open(os.path.join(hwmon_path, "pwm1_enable"), "w") as f:
-            f.write("1")
-        # Set PWM value
-        with open(os.path.join(hwmon_path, "pwm1"), "w") as f:
-            f.write(str(pwm_value))
+        _nsenter_write(os.path.join(host, "pwm1_enable"), 1)
+        _nsenter_write(os.path.join(host, "pwm1"), pwm_value)
         logger.debug("Fan speed set to %d%% (PWM=%d)", speed_pct, pwm_value)
-    except IOError as e:
+    except subprocess.CalledProcessError as e:
+        logger.error("Failed to set fan speed: %s", e.stderr.decode().strip() if e.stderr else str(e))
+    except Exception as e:
         logger.error("Failed to set fan speed: %s", e)
 
 
 def set_fan_auto(hwmon_path):
     """Return fan to automatic kernel control."""
     try:
-        with open(os.path.join(hwmon_path, "pwm1_enable"), "w") as f:
-            f.write("2")
+        _nsenter_write(os.path.join(_host_path(hwmon_path), "pwm1_enable"), 2)
         logger.info("Fan returned to automatic control")
-    except IOError:
+    except Exception:
         pass
 
 
