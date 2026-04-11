@@ -1,6 +1,5 @@
 title: Sistem Solar Deye
 views:
-  # ===== VIEW 1: PREZENTARE GENERALA =====
   - path: default
     title: Prezentare
     cards:
@@ -27,51 +26,6 @@ views:
         min_expected_power: 0.01
         watt_threshold: 1000
         transparency_zero_lines: 0
-
-      - type: gauge
-        title: Putere PV
-        entity: sensor.inverter_deye_pv_power
-        unit: W
-        min: 0
-        max: 10000
-        severity:
-          green: 8000
-          yellow: 3000
-          red: 0
-
-      - type: gauge
-        title: Baterie SOC
-        entity: sensor.inverter_deye_battery
-        unit: "%"
-        min: 0
-        max: 100
-        severity:
-          green: 80
-          yellow: 30
-          red: 0
-
-      - type: gauge
-        title: Putere Consum
-        entity: sensor.inverter_deye_load_power
-        unit: W
-        min: 0
-        max: 5000
-        severity:
-          green: 0
-          yellow: 2000
-          red: 4000
-
-      - type: gauge
-        title: Putere Retea
-        entity: sensor.inverter_deye_grid_power
-        unit: W
-        min: -5000
-        max: 5000
-        severity:
-          red: 3000
-          yellow: 0
-          green: -5000
-
       - type: entities
         title: Stare Curenta
         entities:
@@ -87,7 +41,46 @@ views:
             name: Iesire Invertor
           - entity: sensor.inverter_deye_battery_state
             name: Stare Baterie
-
+      - type: gauge
+        title: Putere PV
+        entity: sensor.inverter_deye_pv_power
+        unit: W
+        min: 0
+        max: 10000
+        severity:
+          green: 8000
+          yellow: 3000
+          red: 0
+      - type: gauge
+        title: Putere Consum
+        entity: sensor.inverter_deye_load_power
+        unit: W
+        min: 0
+        max: 5000
+        severity:
+          green: 0
+          yellow: 2000
+          red: 4000
+      - type: gauge
+        title: Baterie SOC
+        entity: sensor.inverter_deye_battery
+        unit: '%'
+        min: 0
+        max: 100
+        severity:
+          green: 80
+          yellow: 30
+          red: 0
+      - type: gauge
+        title: Putere Retea
+        entity: sensor.inverter_deye_grid_power
+        unit: W
+        min: -5000
+        max: 5000
+        severity:
+          red: 3000
+          yellow: 0
+          green: -5000
       - type: entities
         title: Energie Astazi
         entities:
@@ -103,8 +96,6 @@ views:
             name: Incarcare Baterie
           - entity: sensor.inverter_deye_today_battery_discharge
             name: Descarcare Baterie
-
-  # ===== VIEW 2: GRAFICE =====
   - path: grafice
     title: Grafice
     cards:
@@ -120,7 +111,6 @@ views:
             name: PV2
           - entity: sensor.inverter_deye_pv3_power
             name: PV3
-
       - type: history-graph
         title: Baterie (24h)
         hours_to_show: 24
@@ -129,7 +119,6 @@ views:
             name: Baterie SOC (%)
           - entity: sensor.inverter_deye_battery_power
             name: Putere Baterie (W)
-
       - type: history-graph
         title: Putere Retea (24h)
         hours_to_show: 24
@@ -138,7 +127,6 @@ views:
             name: Putere Retea
           - entity: sensor.inverter_deye_external_power
             name: Putere CT Extern
-
       - type: history-graph
         title: Consum si Iesire (24h)
         hours_to_show: 24
@@ -147,7 +135,6 @@ views:
             name: Putere Consum
           - entity: sensor.inverter_deye_power
             name: Iesire Invertor
-
       - type: history-graph
         title: Temperaturi (24h)
         hours_to_show: 24
@@ -158,8 +145,6 @@ views:
             name: Parte DC
           - entity: sensor.inverter_deye_battery_temperature
             name: Baterie
-
-  # ===== VIEW 3: DETALII =====
   - path: detalii
     title: Detalii
     cards:
@@ -172,7 +157,6 @@ views:
             name: Tensiune
           - entity: sensor.inverter_deye_pv1_current
             name: Curent
-
       - type: entities
         title: PV String 2
         entities:
@@ -182,7 +166,6 @@ views:
             name: Tensiune
           - entity: sensor.inverter_deye_pv2_current
             name: Curent
-
       - type: entities
         title: PV String 3
         entities:
@@ -192,7 +175,6 @@ views:
             name: Tensiune
           - entity: sensor.inverter_deye_pv3_current
             name: Curent
-
       - type: entities
         title: Baterie
         entities:
@@ -208,7 +190,6 @@ views:
             name: Curent
           - entity: sensor.inverter_deye_battery_temperature
             name: Temperatura
-
       - type: entities
         title: Retea L1
         entities:
@@ -222,7 +203,6 @@ views:
             name: Curent L1
           - entity: sensor.inverter_deye_grid_frequency
             name: Frecventa
-
       - type: entities
         title: Consum L1
         entities:
@@ -236,7 +216,6 @@ views:
             name: Curent L1
           - entity: sensor.inverter_deye_load_frequency
             name: Frecventa
-
       - type: entities
         title: Iesire L1
         entities:
@@ -250,7 +229,6 @@ views:
             name: Curent L1
           - entity: sensor.inverter_deye_output_frequency
             name: Frecventa
-
       - type: entities
         title: CT Extern
         entities:
@@ -260,8 +238,6 @@ views:
             name: Putere CT1
           - entity: sensor.inverter_deye_external_ct1_current
             name: Curent CT1
-
-  # ===== VIEW 4: ENERGIE =====
   - path: energie
     title: Energie
     cards:
@@ -284,7 +260,6 @@ views:
             name: Descarcare Baterie
           - entity: sensor.inverter_deye_today_losses
             name: Pierderi
-
       - type: entities
         title: Totaluri (Din Totdeauna)
         entities:
@@ -304,7 +279,6 @@ views:
             name: Descarcare Baterie
           - entity: sensor.inverter_deye_total_losses
             name: Pierderi
-
       - type: statistic
         entity: sensor.inverter_deye_today_production
         stat_type: max
@@ -312,8 +286,6 @@ views:
           calendar:
             period: day
         name: Productie Maxima Zilnica
-
-  # ===== VIEW 5: STARE =====
   - path: stare
     title: Stare
     cards:
@@ -328,7 +300,6 @@ views:
             name: Defect
           - entity: sensor.inverter_deye_device
             name: Tip Dispozitiv
-
       - type: entities
         title: Temperaturi
         entities:
@@ -338,7 +309,6 @@ views:
             name: Parte DC
           - entity: sensor.inverter_deye_battery_temperature
             name: Baterie
-
       - type: entities
         title: Retea si Generator
         entities:
@@ -354,7 +324,6 @@ views:
             name: Frecventa Generator
           - entity: sensor.inverter_deye_generator_energy_today
             name: Energie Generator Astazi
-
       - type: entities
         title: Balanta Putere
         entities:
