@@ -1,0 +1,368 @@
+title: Sistem Solar Deye
+views:
+  # ===== VIEW 1: PREZENTARE GENERALA =====
+  - path: default
+    title: Prezentare
+    cards:
+      - type: custom:power-flow-card-plus
+        entities:
+          battery:
+            entity: sensor.inverter_deye_battery_power
+            state_of_charge: sensor.inverter_deye_battery
+          grid:
+            entity: sensor.inverter_deye_grid_l1_power
+          solar:
+            entity: sensor.inverter_deye_pv_power
+            display_zero_state: true
+          home:
+            entity: sensor.inverter_deye_load_power
+        clickable_entities: true
+        display_zero_lines: true
+        use_new_flow_rate_model: true
+        w_decimals: 0
+        kw_decimals: 1
+        min_flow_rate: 0.75
+        max_flow_rate: 6
+        max_expected_power: 12000
+        min_expected_power: 0.01
+        watt_threshold: 1000
+        transparency_zero_lines: 0
+
+      - type: gauge
+        title: Putere PV
+        entity: sensor.inverter_deye_pv_power
+        unit: W
+        min: 0
+        max: 10000
+        severity:
+          green: 8000
+          yellow: 3000
+          red: 0
+
+      - type: gauge
+        title: Baterie SOC
+        entity: sensor.inverter_deye_battery
+        unit: "%"
+        min: 0
+        max: 100
+        severity:
+          green: 80
+          yellow: 30
+          red: 0
+
+      - type: gauge
+        title: Putere Consum
+        entity: sensor.inverter_deye_load_power
+        unit: W
+        min: 0
+        max: 5000
+        severity:
+          green: 0
+          yellow: 2000
+          red: 4000
+
+      - type: gauge
+        title: Putere Retea
+        entity: sensor.inverter_deye_grid_power
+        unit: W
+        min: -5000
+        max: 5000
+        severity:
+          red: 3000
+          yellow: 0
+          green: -5000
+
+      - type: entities
+        title: Stare Curenta
+        entities:
+          - entity: sensor.inverter_deye_pv_power
+            name: PV Total
+          - entity: sensor.inverter_deye_battery_power
+            name: Putere Baterie
+          - entity: sensor.inverter_deye_load_power
+            name: Putere Consum
+          - entity: sensor.inverter_deye_grid_power
+            name: Putere Retea
+          - entity: sensor.inverter_deye_power
+            name: Iesire Invertor
+          - entity: sensor.inverter_deye_battery_state
+            name: Stare Baterie
+
+      - type: entities
+        title: Energie Astazi
+        entities:
+          - entity: sensor.inverter_deye_today_production
+            name: Productie
+          - entity: sensor.inverter_deye_today_load_consumption
+            name: Consum
+          - entity: sensor.inverter_deye_today_energy_export
+            name: Export Retea
+          - entity: sensor.inverter_deye_today_energy_import
+            name: Import Retea
+          - entity: sensor.inverter_deye_today_battery_charge
+            name: Incarcare Baterie
+          - entity: sensor.inverter_deye_today_battery_discharge
+            name: Descarcare Baterie
+
+  # ===== VIEW 2: GRAFICE =====
+  - path: grafice
+    title: Grafice
+    cards:
+      - type: history-graph
+        title: Putere PV (24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.inverter_deye_pv_power
+            name: PV Total
+          - entity: sensor.inverter_deye_pv1_power
+            name: PV1
+          - entity: sensor.inverter_deye_pv2_power
+            name: PV2
+          - entity: sensor.inverter_deye_pv3_power
+            name: PV3
+
+      - type: history-graph
+        title: Baterie (24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.inverter_deye_battery
+            name: Baterie SOC (%)
+          - entity: sensor.inverter_deye_battery_power
+            name: Putere Baterie (W)
+
+      - type: history-graph
+        title: Putere Retea (24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.inverter_deye_grid_power
+            name: Putere Retea
+          - entity: sensor.inverter_deye_external_power
+            name: Putere CT Extern
+
+      - type: history-graph
+        title: Consum si Iesire (24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.inverter_deye_load_power
+            name: Putere Consum
+          - entity: sensor.inverter_deye_power
+            name: Iesire Invertor
+
+      - type: history-graph
+        title: Temperaturi (24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.inverter_deye_temperature
+            name: Invertor
+          - entity: sensor.inverter_deye_dc_temperature
+            name: Parte DC
+          - entity: sensor.inverter_deye_battery_temperature
+            name: Baterie
+
+  # ===== VIEW 3: DETALII =====
+  - path: detalii
+    title: Detalii
+    cards:
+      - type: entities
+        title: PV String 1
+        entities:
+          - entity: sensor.inverter_deye_pv1_power
+            name: Putere
+          - entity: sensor.inverter_deye_pv1_voltage
+            name: Tensiune
+          - entity: sensor.inverter_deye_pv1_current
+            name: Curent
+
+      - type: entities
+        title: PV String 2
+        entities:
+          - entity: sensor.inverter_deye_pv2_power
+            name: Putere
+          - entity: sensor.inverter_deye_pv2_voltage
+            name: Tensiune
+          - entity: sensor.inverter_deye_pv2_current
+            name: Curent
+
+      - type: entities
+        title: PV String 3
+        entities:
+          - entity: sensor.inverter_deye_pv3_power
+            name: Putere
+          - entity: sensor.inverter_deye_pv3_voltage
+            name: Tensiune
+          - entity: sensor.inverter_deye_pv3_current
+            name: Curent
+
+      - type: entities
+        title: Baterie
+        entities:
+          - entity: sensor.inverter_deye_battery
+            name: SOC
+          - entity: sensor.inverter_deye_battery_state
+            name: Stare
+          - entity: sensor.inverter_deye_battery_power
+            name: Putere
+          - entity: sensor.inverter_deye_battery_voltage
+            name: Tensiune
+          - entity: sensor.inverter_deye_battery_current
+            name: Curent
+          - entity: sensor.inverter_deye_battery_temperature
+            name: Temperatura
+
+      - type: entities
+        title: Retea L1
+        entities:
+          - entity: sensor.inverter_deye_grid_power
+            name: Putere Retea
+          - entity: sensor.inverter_deye_grid_l1_power
+            name: Putere L1
+          - entity: sensor.inverter_deye_grid_l1_voltage
+            name: Tensiune L1
+          - entity: sensor.inverter_deye_grid_l1_current
+            name: Curent L1
+          - entity: sensor.inverter_deye_grid_frequency
+            name: Frecventa
+
+      - type: entities
+        title: Consum L1
+        entities:
+          - entity: sensor.inverter_deye_load_power
+            name: Putere Consum
+          - entity: sensor.inverter_deye_load_l1_power
+            name: Putere L1
+          - entity: sensor.inverter_deye_load_l1_voltage
+            name: Tensiune L1
+          - entity: sensor.inverter_deye_load_l1_current
+            name: Curent L1
+          - entity: sensor.inverter_deye_load_frequency
+            name: Frecventa
+
+      - type: entities
+        title: Iesire L1
+        entities:
+          - entity: sensor.inverter_deye_power
+            name: Putere Iesire
+          - entity: sensor.inverter_deye_output_l1_power
+            name: Putere L1
+          - entity: sensor.inverter_deye_output_l1_voltage
+            name: Tensiune L1
+          - entity: sensor.inverter_deye_output_l1_current
+            name: Curent L1
+          - entity: sensor.inverter_deye_output_frequency
+            name: Frecventa
+
+      - type: entities
+        title: CT Extern
+        entities:
+          - entity: sensor.inverter_deye_external_power
+            name: Putere Externa
+          - entity: sensor.inverter_deye_external_ct1_power
+            name: Putere CT1
+          - entity: sensor.inverter_deye_external_ct1_current
+            name: Curent CT1
+
+  # ===== VIEW 4: ENERGIE =====
+  - path: energie
+    title: Energie
+    cards:
+      - type: entities
+        title: Astazi
+        entities:
+          - entity: sensor.inverter_deye_today_production
+            name: Productie
+          - entity: sensor.inverter_deye_today_energy
+            name: Energie
+          - entity: sensor.inverter_deye_today_load_consumption
+            name: Consum
+          - entity: sensor.inverter_deye_today_energy_export
+            name: Export Retea
+          - entity: sensor.inverter_deye_today_energy_import
+            name: Import Retea
+          - entity: sensor.inverter_deye_today_battery_charge
+            name: Incarcare Baterie
+          - entity: sensor.inverter_deye_today_battery_discharge
+            name: Descarcare Baterie
+          - entity: sensor.inverter_deye_today_losses
+            name: Pierderi
+
+      - type: entities
+        title: Totaluri (Din Totdeauna)
+        entities:
+          - entity: sensor.inverter_deye_total_production
+            name: Productie
+          - entity: sensor.inverter_deye_total_energy
+            name: Energie
+          - entity: sensor.inverter_deye_total_load_consumption
+            name: Consum
+          - entity: sensor.inverter_deye_total_energy_export
+            name: Export Retea
+          - entity: sensor.inverter_deye_total_energy_import
+            name: Import Retea
+          - entity: sensor.inverter_deye_total_battery_charge
+            name: Incarcare Baterie
+          - entity: sensor.inverter_deye_total_battery_discharge
+            name: Descarcare Baterie
+          - entity: sensor.inverter_deye_total_losses
+            name: Pierderi
+
+      - type: statistic
+        entity: sensor.inverter_deye_today_production
+        stat_type: max
+        period:
+          calendar:
+            period: day
+        name: Productie Maxima Zilnica
+
+  # ===== VIEW 5: STARE =====
+  - path: stare
+    title: Stare
+    cards:
+      - type: entities
+        title: Stare Dispozitiv
+        entities:
+          - entity: sensor.inverter_deye_device_state
+            name: Stare
+          - entity: sensor.inverter_deye_device_alarm
+            name: Alarma
+          - entity: sensor.inverter_deye_device_fault
+            name: Defect
+          - entity: sensor.inverter_deye_device
+            name: Tip Dispozitiv
+
+      - type: entities
+        title: Temperaturi
+        entities:
+          - entity: sensor.inverter_deye_temperature
+            name: Invertor
+          - entity: sensor.inverter_deye_dc_temperature
+            name: Parte DC
+          - entity: sensor.inverter_deye_battery_temperature
+            name: Baterie
+
+      - type: entities
+        title: Retea si Generator
+        entities:
+          - entity: sensor.inverter_deye_grid_frequency
+            name: Frecventa Retea
+          - entity: binary_sensor.inverter_deye_generator
+            name: Generator
+          - entity: sensor.inverter_deye_generator_power
+            name: Putere Generator
+          - entity: sensor.inverter_deye_generator_voltage
+            name: Tensiune Generator
+          - entity: sensor.inverter_deye_generator_frequency
+            name: Frecventa Generator
+          - entity: sensor.inverter_deye_generator_energy_today
+            name: Energie Generator Astazi
+
+      - type: entities
+        title: Balanta Putere
+        entities:
+          - entity: sensor.inverter_deye_pv_power
+            name: Intrare PV
+          - entity: sensor.inverter_deye_power
+            name: Iesire Invertor
+          - entity: sensor.inverter_deye_power_losses
+            name: Pierderi
+          - entity: sensor.inverter_deye_battery_capacity
+            name: Capacitate Baterie

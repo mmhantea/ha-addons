@@ -1,0 +1,277 @@
+title: Deye Admin
+views:
+  # ===== VIEW 1: PROGRAMS =====
+  - path: default
+    title: Programs
+    cards:
+      - type: entities
+        title: Program 1
+        entities:
+          - entity: number.inverter_deye_program_1_power
+            name: Power
+          - entity: number.inverter_deye_program_1_soc
+            name: SOC
+          - entity: number.inverter_deye_program_1_voltage
+            name: Voltage
+          - entity: select.inverter_deye_program_1_charging
+            name: Charging
+          - entity: time.inverter_deye_program_1_time
+            name: Time
+
+      - type: entities
+        title: Program 2
+        entities:
+          - entity: number.inverter_deye_program_2_power
+            name: Power
+          - entity: number.inverter_deye_program_2_soc
+            name: SOC
+          - entity: number.inverter_deye_program_2_voltage
+            name: Voltage
+          - entity: select.inverter_deye_program_2_charging
+            name: Charging
+          - entity: time.inverter_deye_program_2_time
+            name: Time
+
+      - type: entities
+        title: Program 3
+        entities:
+          - entity: number.inverter_deye_program_3_power
+            name: Power
+          - entity: number.inverter_deye_program_3_soc
+            name: SOC
+          - entity: number.inverter_deye_program_3_voltage
+            name: Voltage
+          - entity: select.inverter_deye_program_3_charging
+            name: Charging
+          - entity: time.inverter_deye_program_3_time
+            name: Time
+
+      - type: entities
+        title: Program 4
+        entities:
+          - entity: number.inverter_deye_program_4_power
+            name: Power
+          - entity: number.inverter_deye_program_4_soc
+            name: SOC
+          - entity: number.inverter_deye_program_4_voltage
+            name: Voltage
+          - entity: select.inverter_deye_program_4_charging
+            name: Charging
+          - entity: time.inverter_deye_program_4_time
+            name: Time
+
+      - type: entities
+        title: Program 5
+        entities:
+          - entity: number.inverter_deye_program_5_power
+            name: Power
+          - entity: number.inverter_deye_program_5_soc
+            name: SOC
+          - entity: number.inverter_deye_program_5_voltage
+            name: Voltage
+          - entity: select.inverter_deye_program_5_charging
+            name: Charging
+          - entity: time.inverter_deye_program_5_time
+            name: Time
+
+      - type: entities
+        title: Program 6
+        entities:
+          - entity: number.inverter_deye_program_6_power
+            name: Power
+          - entity: number.inverter_deye_program_6_soc
+            name: SOC
+          - entity: number.inverter_deye_program_6_voltage
+            name: Voltage
+          - entity: select.inverter_deye_program_6_charging
+            name: Charging
+          - entity: time.inverter_deye_program_6_time
+            name: Time
+
+  # ===== VIEW 2: GRID PROTECTION =====
+  - path: protection
+    title: Grid Protection
+    cards:
+      - type: entities
+        title: Voltage Protection
+        entities:
+          - entity: number.inverter_deye_grid_voltage_protection_high
+            name: Voltage High
+          - entity: number.inverter_deye_grid_voltage_protection_low
+            name: Voltage Low
+
+      - type: entities
+        title: Frequency Protection
+        entities:
+          - entity: number.inverter_deye_grid_frequency_protection_high
+            name: Frequency High
+          - entity: number.inverter_deye_grid_frequency_protection_low
+            name: Frequency Low
+
+      - type: entities
+        title: Peak Shaving
+        entities:
+          - entity: number.inverter_deye_grid_peak_shaving
+            name: Grid Peak Shaving
+          - entity: switch.inverter_deye_grid_peak_shaving
+            name: Grid Peak Shaving Enable
+          - entity: number.inverter_deye_generator_peak_shaving
+            name: Generator Peak Shaving
+          - entity: switch.inverter_deye_generator_peak_shaving
+            name: Generator Peak Shaving Enable
+
+  # ===== VIEW 3: BATTERY CONFIG =====
+  - path: battery
+    title: Battery
+    cards:
+      - type: entities
+        title: Battery Settings
+        entities:
+          - entity: select.inverter_deye_battery_control_mode
+            name: Control Mode
+          - entity: select.inverter_deye_battery_operation_mode
+            name: Operation Mode
+          - entity: select.inverter_deye_battery_bms_type
+            name: BMS Type
+          - entity: number.inverter_deye_battery_capacity
+            name: Capacity
+          - entity: number.inverter_deye_battery_charging_efficiency
+            name: Charging Efficiency
+
+      - type: entities
+        title: Battery Limits
+        entities:
+          - entity: number.inverter_deye_battery_max_charging_current
+            name: Max Charging Current
+          - entity: number.inverter_deye_battery_max_discharging_current
+            name: Max Discharging Current
+          - entity: number.inverter_deye_battery_low_soc
+            name: Low SOC
+          - entity: number.inverter_deye_battery_low_voltage
+            name: Low Voltage
+          - entity: number.inverter_deye_battery_empty
+            name: Empty Voltage
+
+      - type: entities
+        title: Battery Voltages
+        entities:
+          - entity: number.inverter_deye_battery_absorption
+            name: Absorption
+          - entity: number.inverter_deye_battery_float
+            name: Float
+          - entity: number.inverter_deye_battery_equalization
+            name: Equalization
+          - entity: number.inverter_deye_battery_equalization_cycle
+            name: Equalization Cycle
+          - entity: number.inverter_deye_battery_equalization_time
+            name: Equalization Time
+
+      - type: entities
+        title: Battery Other
+        entities:
+          - entity: switch.inverter_deye_battery_wake_up
+            name: Battery Wake Up
+
+      - type: entities
+        title: Battery Grid Charging
+        entities:
+          - entity: switch.inverter_deye_battery_grid_charging
+            name: Enable
+          - entity: number.inverter_deye_battery_grid_charging_current
+            name: Current
+          - entity: number.inverter_deye_battery_grid_charging_start
+            name: Start SOC
+          - entity: number.inverter_deye_battery_grid_charging_start_voltage
+            name: Start Voltage
+
+      - type: entities
+        title: Battery Generator Charging
+        entities:
+          - entity: switch.inverter_deye_battery_generator_charging
+            name: Enable
+          - entity: number.inverter_deye_battery_generator_charging_current
+            name: Current
+          - entity: number.inverter_deye_battery_generator_charging_start
+            name: Start SOC
+          - entity: number.inverter_deye_battery_generator_charging_start_voltage
+            name: Start Voltage
+
+  # ===== VIEW 4: SYSTEM CONFIG =====
+  - path: system
+    title: System
+    cards:
+      - type: entities
+        title: Work Mode
+        entities:
+          - entity: select.inverter_deye_work_mode
+            name: Work Mode
+          - entity: select.inverter_deye_energy_pattern
+            name: Energy Pattern
+          - entity: select.inverter_deye_time_of_use
+            name: Time of Use
+          - entity: select.inverter_deye_grid_frequency
+            name: Grid Frequency
+
+      - type: entities
+        title: Export & SmartLoad
+        entities:
+          - entity: switch.inverter_deye_export_surplus
+            name: Export Surplus
+          - entity: number.inverter_deye_export_surplus_power
+            name: Export Surplus Power
+          - entity: number.inverter_deye_zero_export_power
+            name: Zero Export Power
+          - entity: number.inverter_deye_smartload_on
+            name: SmartLoad On SOC
+          - entity: number.inverter_deye_smartload_off
+            name: SmartLoad Off SOC
+          - entity: number.inverter_deye_smartload_on_voltage
+            name: SmartLoad On Voltage
+          - entity: number.inverter_deye_smartload_off_voltage
+            name: SmartLoad Off Voltage
+
+      - type: entities
+        title: Generator
+        entities:
+          - entity: switch.inverter_deye_generator
+            name: Generator Enable
+          - entity: switch.inverter_deye_generator_on_grid
+            name: On-Grid
+          - entity: switch.inverter_deye_generator_grid_side
+            name: Grid Side
+          - entity: number.inverter_deye_generator_operating_time
+            name: Operating Time
+          - entity: number.inverter_deye_generator_cooling_time
+            name: Cooling Time
+          - entity: number.inverter_deye_generator_min_pv_power
+            name: Min PV Power
+
+      - type: entities
+        title: Advanced
+        entities:
+          - entity: select.inverter_deye_io_mode
+            name: IO Mode
+          - entity: select.inverter_deye_charging_signal
+            name: Charging Signal
+          - entity: select.inverter_deye_meter
+            name: Meter
+          - entity: select.inverter_deye_ac_coupling
+            name: AC Coupling
+          - entity: switch.inverter_deye_off_grid
+            name: Off Grid
+          - entity: switch.inverter_deye_microinverter_export_cut_off
+            name: Microinverter Export Cut-off
+          - entity: number.inverter_deye_self_check_time
+            name: Self-check Time
+          - entity: number.inverter_deye_pv_power
+            name: PV Power Limit
+
+      - type: entities
+        title: Connection
+        entities:
+          - entity: switch.inverter_deye
+            name: Inverter On/Off
+          - entity: switch.inverter_deye_access_point
+            name: Access Point
+          - entity: sensor.inverter_deye_update_interval
+            name: Update Interval

@@ -1,0 +1,346 @@
+title: Sistem Solar Deye
+views:
+  # ===== VIEW 1: OVERVIEW =====
+  - path: default
+    title: Overview
+    cards:
+      # --- Power Gauges (2x2 grid) ---
+      - type: gauge
+        title: PV Power
+        entity: sensor.inverter_deye_pv_power
+        unit: W
+        min: 0
+        max: 10000
+        severity:
+          green: 8000
+          yellow: 3000
+          red: 0
+
+      - type: gauge
+        title: Battery SOC
+        entity: sensor.inverter_deye_battery
+        unit: "%"
+        min: 0
+        max: 100
+        severity:
+          green: 80
+          yellow: 30
+          red: 0
+
+      - type: gauge
+        title: Load Power
+        entity: sensor.inverter_deye_load_power
+        unit: W
+        min: 0
+        max: 5000
+        severity:
+          green: 0
+          yellow: 2000
+          red: 4000
+
+      - type: gauge
+        title: Grid Power
+        entity: sensor.inverter_deye_grid_power
+        unit: W
+        min: -5000
+        max: 5000
+        severity:
+          red: 3000
+          yellow: 0
+          green: -5000
+
+      # --- Key Info Cards ---
+      - type: entities
+        title: Live Status
+        entities:
+          - entity: sensor.inverter_deye_pv_power
+            name: PV Total
+          - entity: sensor.inverter_deye_battery_power
+            name: Battery Power
+          - entity: sensor.inverter_deye_load_power
+            name: Load Power
+          - entity: sensor.inverter_deye_grid_power
+            name: Grid Power
+          - entity: sensor.inverter_deye_power
+            name: Inverter Output
+          - entity: sensor.inverter_deye_battery_state
+            name: Battery State
+
+      - type: entities
+        title: Today Energy
+        entities:
+          - entity: sensor.inverter_deye_today_production
+            name: Production
+          - entity: sensor.inverter_deye_today_load_consumption
+            name: Load Consumption
+          - entity: sensor.inverter_deye_today_energy_export
+            name: Grid Export
+          - entity: sensor.inverter_deye_today_energy_import
+            name: Grid Import
+          - entity: sensor.inverter_deye_today_battery_charge
+            name: Battery Charge
+          - entity: sensor.inverter_deye_today_battery_discharge
+            name: Battery Discharge
+
+  # ===== VIEW 2: GRAFICE =====
+  - path: grafice
+    title: Grafice
+    cards:
+      - type: history-graph
+        title: PV Power (24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.inverter_deye_pv_power
+            name: PV Total
+          - entity: sensor.inverter_deye_pv1_power
+            name: PV1
+          - entity: sensor.inverter_deye_pv2_power
+            name: PV2
+          - entity: sensor.inverter_deye_pv3_power
+            name: PV3
+
+      - type: history-graph
+        title: Battery (24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.inverter_deye_battery
+            name: Battery SOC (%)
+          - entity: sensor.inverter_deye_battery_power
+            name: Battery Power (W)
+
+      - type: history-graph
+        title: Grid Power (24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.inverter_deye_grid_power
+            name: Grid Power
+          - entity: sensor.inverter_deye_external_power
+            name: External CT Power
+
+      - type: history-graph
+        title: Load & Output (24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.inverter_deye_load_power
+            name: Load Power
+          - entity: sensor.inverter_deye_power
+            name: Inverter Output
+
+      - type: history-graph
+        title: Temperatures (24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.inverter_deye_temperature
+            name: Inverter
+          - entity: sensor.inverter_deye_dc_temperature
+            name: DC Side
+          - entity: sensor.inverter_deye_battery_temperature
+            name: Battery
+
+  # ===== VIEW 3: DETALII =====
+  - path: detalii
+    title: Detalii
+    cards:
+      - type: entities
+        title: PV String 1
+        entities:
+          - entity: sensor.inverter_deye_pv1_power
+            name: Power
+          - entity: sensor.inverter_deye_pv1_voltage
+            name: Voltage
+          - entity: sensor.inverter_deye_pv1_current
+            name: Current
+
+      - type: entities
+        title: PV String 2
+        entities:
+          - entity: sensor.inverter_deye_pv2_power
+            name: Power
+          - entity: sensor.inverter_deye_pv2_voltage
+            name: Voltage
+          - entity: sensor.inverter_deye_pv2_current
+            name: Current
+
+      - type: entities
+        title: PV String 3
+        entities:
+          - entity: sensor.inverter_deye_pv3_power
+            name: Power
+          - entity: sensor.inverter_deye_pv3_voltage
+            name: Voltage
+          - entity: sensor.inverter_deye_pv3_current
+            name: Current
+
+      - type: entities
+        title: Battery
+        entities:
+          - entity: sensor.inverter_deye_battery
+            name: SOC
+          - entity: sensor.inverter_deye_battery_state
+            name: State
+          - entity: sensor.inverter_deye_battery_power
+            name: Power
+          - entity: sensor.inverter_deye_battery_voltage
+            name: Voltage
+          - entity: sensor.inverter_deye_battery_current
+            name: Current
+          - entity: sensor.inverter_deye_battery_temperature
+            name: Temperature
+
+      - type: entities
+        title: Grid L1
+        entities:
+          - entity: sensor.inverter_deye_grid_power
+            name: Grid Power
+          - entity: sensor.inverter_deye_grid_l1_power
+            name: L1 Power
+          - entity: sensor.inverter_deye_grid_l1_voltage
+            name: L1 Voltage
+          - entity: sensor.inverter_deye_grid_l1_current
+            name: L1 Current
+          - entity: sensor.inverter_deye_grid_frequency
+            name: Frequency
+
+      - type: entities
+        title: Load L1
+        entities:
+          - entity: sensor.inverter_deye_load_power
+            name: Load Power
+          - entity: sensor.inverter_deye_load_l1_power
+            name: L1 Power
+          - entity: sensor.inverter_deye_load_l1_voltage
+            name: L1 Voltage
+          - entity: sensor.inverter_deye_load_l1_current
+            name: L1 Current
+          - entity: sensor.inverter_deye_load_frequency
+            name: Frequency
+
+      - type: entities
+        title: Output L1
+        entities:
+          - entity: sensor.inverter_deye_power
+            name: Output Power
+          - entity: sensor.inverter_deye_output_l1_power
+            name: L1 Power
+          - entity: sensor.inverter_deye_output_l1_voltage
+            name: L1 Voltage
+          - entity: sensor.inverter_deye_output_l1_current
+            name: L1 Current
+          - entity: sensor.inverter_deye_output_frequency
+            name: Frequency
+
+      - type: entities
+        title: External CT
+        entities:
+          - entity: sensor.inverter_deye_external_power
+            name: External Power
+          - entity: sensor.inverter_deye_external_ct1_power
+            name: CT1 Power
+          - entity: sensor.inverter_deye_external_ct1_current
+            name: CT1 Current
+
+  # ===== VIEW 4: ENERGIE =====
+  - path: energie
+    title: Energie
+    cards:
+      - type: entities
+        title: Today
+        entities:
+          - entity: sensor.inverter_deye_today_production
+            name: Production
+          - entity: sensor.inverter_deye_today_energy
+            name: Energy
+          - entity: sensor.inverter_deye_today_load_consumption
+            name: Load Consumption
+          - entity: sensor.inverter_deye_today_energy_export
+            name: Grid Export
+          - entity: sensor.inverter_deye_today_energy_import
+            name: Grid Import
+          - entity: sensor.inverter_deye_today_battery_charge
+            name: Battery Charge
+          - entity: sensor.inverter_deye_today_battery_discharge
+            name: Battery Discharge
+          - entity: sensor.inverter_deye_today_losses
+            name: Losses
+
+      - type: entities
+        title: Totals (Lifetime)
+        entities:
+          - entity: sensor.inverter_deye_total_production
+            name: Production
+          - entity: sensor.inverter_deye_total_energy
+            name: Energy
+          - entity: sensor.inverter_deye_total_load_consumption
+            name: Load Consumption
+          - entity: sensor.inverter_deye_total_energy_export
+            name: Grid Export
+          - entity: sensor.inverter_deye_total_energy_import
+            name: Grid Import
+          - entity: sensor.inverter_deye_total_battery_charge
+            name: Battery Charge
+          - entity: sensor.inverter_deye_total_battery_discharge
+            name: Battery Discharge
+          - entity: sensor.inverter_deye_total_losses
+            name: Losses
+
+      - type: statistic
+        entity: sensor.inverter_deye_today_production
+        stat_type: max
+        period:
+          calendar:
+            period: day
+        name: Max Daily Production
+
+  # ===== VIEW 5: STATUS =====
+  - path: status
+    title: Status
+    cards:
+      - type: entities
+        title: Device Status
+        entities:
+          - entity: sensor.inverter_deye_device_state
+            name: State
+          - entity: sensor.inverter_deye_device_alarm
+            name: Alarm
+          - entity: sensor.inverter_deye_device_fault
+            name: Fault
+          - entity: sensor.inverter_deye_device
+            name: Device Type
+
+      - type: entities
+        title: Temperatures
+        entities:
+          - entity: sensor.inverter_deye_temperature
+            name: Inverter
+          - entity: sensor.inverter_deye_dc_temperature
+            name: DC Side
+          - entity: sensor.inverter_deye_battery_temperature
+            name: Battery
+
+      - type: entities
+        title: Grid & Generator
+        entities:
+          - entity: sensor.inverter_deye_grid_frequency
+            name: Grid Frequency
+          - entity: binary_sensor.inverter_deye_generator
+            name: Generator
+          - entity: sensor.inverter_deye_generator_power
+            name: Generator Power
+          - entity: sensor.inverter_deye_generator_voltage
+            name: Generator Voltage
+          - entity: sensor.inverter_deye_generator_frequency
+            name: Generator Frequency
+          - entity: sensor.inverter_deye_generator_energy_today
+            name: Generator Energy Today
+
+      - type: entities
+        title: Power Balance
+        entities:
+          - entity: sensor.inverter_deye_pv_power
+            name: PV Input
+          - entity: sensor.inverter_deye_power
+            name: Inverter Output
+          - entity: sensor.inverter_deye_power_losses
+            name: Losses
+          - entity: sensor.inverter_deye_battery_capacity
+            name: Battery Capacity

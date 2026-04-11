@@ -1,0 +1,277 @@
+title: Deye Administrare
+views:
+  # ===== VIEW 1: PROGRAME =====
+  - path: default
+    title: Programe
+    cards:
+      - type: entities
+        title: Program 1
+        entities:
+          - entity: number.inverter_deye_program_1_power
+            name: Putere
+          - entity: number.inverter_deye_program_1_soc
+            name: SOC
+          - entity: number.inverter_deye_program_1_voltage
+            name: Tensiune
+          - entity: select.inverter_deye_program_1_charging
+            name: Incarcare
+          - entity: time.inverter_deye_program_1_time
+            name: Ora
+
+      - type: entities
+        title: Program 2
+        entities:
+          - entity: number.inverter_deye_program_2_power
+            name: Putere
+          - entity: number.inverter_deye_program_2_soc
+            name: SOC
+          - entity: number.inverter_deye_program_2_voltage
+            name: Tensiune
+          - entity: select.inverter_deye_program_2_charging
+            name: Incarcare
+          - entity: time.inverter_deye_program_2_time
+            name: Ora
+
+      - type: entities
+        title: Program 3
+        entities:
+          - entity: number.inverter_deye_program_3_power
+            name: Putere
+          - entity: number.inverter_deye_program_3_soc
+            name: SOC
+          - entity: number.inverter_deye_program_3_voltage
+            name: Tensiune
+          - entity: select.inverter_deye_program_3_charging
+            name: Incarcare
+          - entity: time.inverter_deye_program_3_time
+            name: Ora
+
+      - type: entities
+        title: Program 4
+        entities:
+          - entity: number.inverter_deye_program_4_power
+            name: Putere
+          - entity: number.inverter_deye_program_4_soc
+            name: SOC
+          - entity: number.inverter_deye_program_4_voltage
+            name: Tensiune
+          - entity: select.inverter_deye_program_4_charging
+            name: Incarcare
+          - entity: time.inverter_deye_program_4_time
+            name: Ora
+
+      - type: entities
+        title: Program 5
+        entities:
+          - entity: number.inverter_deye_program_5_power
+            name: Putere
+          - entity: number.inverter_deye_program_5_soc
+            name: SOC
+          - entity: number.inverter_deye_program_5_voltage
+            name: Tensiune
+          - entity: select.inverter_deye_program_5_charging
+            name: Incarcare
+          - entity: time.inverter_deye_program_5_time
+            name: Ora
+
+      - type: entities
+        title: Program 6
+        entities:
+          - entity: number.inverter_deye_program_6_power
+            name: Putere
+          - entity: number.inverter_deye_program_6_soc
+            name: SOC
+          - entity: number.inverter_deye_program_6_voltage
+            name: Tensiune
+          - entity: select.inverter_deye_program_6_charging
+            name: Incarcare
+          - entity: time.inverter_deye_program_6_time
+            name: Ora
+
+  # ===== VIEW 2: PROTECTIE RETEA =====
+  - path: protectie
+    title: Protectie Retea
+    cards:
+      - type: entities
+        title: Protectie Tensiune
+        entities:
+          - entity: number.inverter_deye_grid_voltage_protection_high
+            name: Tensiune Maxima
+          - entity: number.inverter_deye_grid_voltage_protection_low
+            name: Tensiune Minima
+
+      - type: entities
+        title: Protectie Frecventa
+        entities:
+          - entity: number.inverter_deye_grid_frequency_protection_high
+            name: Frecventa Maxima
+          - entity: number.inverter_deye_grid_frequency_protection_low
+            name: Frecventa Minima
+
+      - type: entities
+        title: Limitare Varf (Peak Shaving)
+        entities:
+          - entity: number.inverter_deye_grid_peak_shaving
+            name: Limitare Retea
+          - entity: switch.inverter_deye_grid_peak_shaving
+            name: Activare Limitare Retea
+          - entity: number.inverter_deye_generator_peak_shaving
+            name: Limitare Generator
+          - entity: switch.inverter_deye_generator_peak_shaving
+            name: Activare Limitare Generator
+
+  # ===== VIEW 3: CONFIGURARE BATERIE =====
+  - path: baterie
+    title: Baterie
+    cards:
+      - type: entities
+        title: Setari Baterie
+        entities:
+          - entity: select.inverter_deye_battery_control_mode
+            name: Mod Control
+          - entity: select.inverter_deye_battery_operation_mode
+            name: Mod Operare
+          - entity: select.inverter_deye_battery_bms_type
+            name: Tip BMS
+          - entity: number.inverter_deye_battery_capacity
+            name: Capacitate
+          - entity: number.inverter_deye_battery_charging_efficiency
+            name: Eficienta Incarcare
+
+      - type: entities
+        title: Limite Baterie
+        entities:
+          - entity: number.inverter_deye_battery_max_charging_current
+            name: Curent Maxim Incarcare
+          - entity: number.inverter_deye_battery_max_discharging_current
+            name: Curent Maxim Descarcare
+          - entity: number.inverter_deye_battery_low_soc
+            name: SOC Minim
+          - entity: number.inverter_deye_battery_low_voltage
+            name: Tensiune Minima
+          - entity: number.inverter_deye_battery_empty
+            name: Tensiune Gol
+
+      - type: entities
+        title: Tensiuni Baterie
+        entities:
+          - entity: number.inverter_deye_battery_absorption
+            name: Absorbtie
+          - entity: number.inverter_deye_battery_float
+            name: Mentinere (Float)
+          - entity: number.inverter_deye_battery_equalization
+            name: Egalizare
+          - entity: number.inverter_deye_battery_equalization_cycle
+            name: Ciclu Egalizare
+          - entity: number.inverter_deye_battery_equalization_time
+            name: Timp Egalizare
+
+      - type: entities
+        title: Altele
+        entities:
+          - entity: switch.inverter_deye_battery_wake_up
+            name: Trezire Baterie
+
+      - type: entities
+        title: Incarcare din Retea
+        entities:
+          - entity: switch.inverter_deye_battery_grid_charging
+            name: Activare
+          - entity: number.inverter_deye_battery_grid_charging_current
+            name: Curent
+          - entity: number.inverter_deye_battery_grid_charging_start
+            name: SOC Start
+          - entity: number.inverter_deye_battery_grid_charging_start_voltage
+            name: Tensiune Start
+
+      - type: entities
+        title: Incarcare din Generator
+        entities:
+          - entity: switch.inverter_deye_battery_generator_charging
+            name: Activare
+          - entity: number.inverter_deye_battery_generator_charging_current
+            name: Curent
+          - entity: number.inverter_deye_battery_generator_charging_start
+            name: SOC Start
+          - entity: number.inverter_deye_battery_generator_charging_start_voltage
+            name: Tensiune Start
+
+  # ===== VIEW 4: CONFIGURARE SISTEM =====
+  - path: sistem
+    title: Sistem
+    cards:
+      - type: entities
+        title: Mod Functionare
+        entities:
+          - entity: select.inverter_deye_work_mode
+            name: Mod Lucru
+          - entity: select.inverter_deye_energy_pattern
+            name: Model Energie
+          - entity: select.inverter_deye_time_of_use
+            name: Program Orar
+          - entity: select.inverter_deye_grid_frequency
+            name: Frecventa Retea
+
+      - type: entities
+        title: Export si SmartLoad
+        entities:
+          - entity: switch.inverter_deye_export_surplus
+            name: Export Surplus
+          - entity: number.inverter_deye_export_surplus_power
+            name: Putere Export Surplus
+          - entity: number.inverter_deye_zero_export_power
+            name: Putere Zero Export
+          - entity: number.inverter_deye_smartload_on
+            name: SmartLoad Pornire SOC
+          - entity: number.inverter_deye_smartload_off
+            name: SmartLoad Oprire SOC
+          - entity: number.inverter_deye_smartload_on_voltage
+            name: SmartLoad Pornire Tensiune
+          - entity: number.inverter_deye_smartload_off_voltage
+            name: SmartLoad Oprire Tensiune
+
+      - type: entities
+        title: Generator
+        entities:
+          - entity: switch.inverter_deye_generator
+            name: Activare Generator
+          - entity: switch.inverter_deye_generator_on_grid
+            name: Pe Retea
+          - entity: switch.inverter_deye_generator_grid_side
+            name: Parte Retea
+          - entity: number.inverter_deye_generator_operating_time
+            name: Timp Functionare
+          - entity: number.inverter_deye_generator_cooling_time
+            name: Timp Racire
+          - entity: number.inverter_deye_generator_min_pv_power
+            name: Putere PV Minima
+
+      - type: entities
+        title: Avansat
+        entities:
+          - entity: select.inverter_deye_io_mode
+            name: Mod IO
+          - entity: select.inverter_deye_charging_signal
+            name: Semnal Incarcare
+          - entity: select.inverter_deye_meter
+            name: Contor
+          - entity: select.inverter_deye_ac_coupling
+            name: Cuplare AC
+          - entity: switch.inverter_deye_off_grid
+            name: Mod Izolat (Off Grid)
+          - entity: switch.inverter_deye_microinverter_export_cut_off
+            name: Oprire Export Microinvertor
+          - entity: number.inverter_deye_self_check_time
+            name: Timp Auto-verificare
+          - entity: number.inverter_deye_pv_power
+            name: Limita Putere PV
+
+      - type: entities
+        title: Conexiune
+        entities:
+          - entity: switch.inverter_deye
+            name: Invertor Pornit/Oprit
+          - entity: switch.inverter_deye_access_point
+            name: Punct de Acces
+          - entity: sensor.inverter_deye_update_interval
+            name: Interval Actualizare
